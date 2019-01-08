@@ -38,19 +38,20 @@ while True:
         minSize=(30, 30)
     )
 
-    # Draw a rectangle around the faces
-    for (x, y, w, h) in faces:
+    if len(faces) > 0:
+	(x,y,w,h) = faces[0]
+	
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 	cx, cy = x+w/2, y+h/2
 	moveX = str(abs(cx-centerX)//unitX)
-	if moveX == '10':
+	if int(moveX) >= 10:
 		moveX = '9'
 	moveY = str(abs(cy-centerY)//unitY)
-	if moveY == '10':
+	if int(moveY) >= 10:
 		moveY = '9'
 	
         # x y
-	delay = 0.1
+	delay = 0.2
 	if prevprinted+delay <= time.time():
 		if cx > centerX and cy > centerY:
 		    print("--"+moveX+moveY)
@@ -65,23 +66,19 @@ while True:
 		    print("++"+moveX+moveY)
 		    ser.write("++"+moveX+moveY+"\n")
 		prevprinted = time.time()
-    	break
 
     if anterior != len(faces):
         anterior = len(faces)
         log.info("faces: "+str(len(faces))+" at "+str(dt.datetime.now()))
 
-
     # Display the resulting frame
     cv2.imshow('Video', frame)
-
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-'''
-    # Display the resulting frame
-    cv2.imshow('Video', frame)
+
 '''
 # When everything is done, release the capture
 video_capture.release()
 cv2.destroyAllWindows()
+'''
