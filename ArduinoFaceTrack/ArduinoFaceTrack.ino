@@ -1,49 +1,67 @@
 #include <Servo.h>
 
-Servo myServo;
-int servoPos = 90;
-int editAmount = 10;
-float factor = 1.5f;
-bool autoAmount = true;
+Servo xServo;
+Servo yServo;
+int xServoPos = 90;
+int yServoPos = 90;
+int xEditAmount = 10;
+int yEditAmount = 10;
+float xFactor = 1.7f;
+float yFactor = 1.5f;
 
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(100);
-  myServo.attach(9);
-  myServo.write(servoPos);
+  xServo.attach(9);
+  xServo.write(xServoPos);
+  yServo.attach(10);
+  yServo.write(yServoPos);
 }
 
 void loop() {
   /*if (Serial.available() > 0)
   {
-    servoPos = Serial.readString().toInt();
-    if (servoPos != NULL)
+    xServoPos = Serial.readString().toInt();
+    if (xServoPos != NULL)
     {
-      myServo.write(servoPos);
+      xServo.write(xServoPos);
     }*/
-  if (Serial.available())//  > 0 && myServo.read() == servoPos
+  if (Serial.available())//  > 0 && xServo.read() == xServoPos
   {
     String incomingData = Serial.readString();
-    if (autoAmount==true){
-      editAmount = (incomingData[2] - '0')*factor;
-      Serial.println(editAmount);
-    }
+    xEditAmount = (incomingData[2] - '0')*xFactor;
+    yEditAmount = (incomingData[3] - '0')*yFactor;
+    
+    //Serial.println(xEditAmount);
     //Serial.print(incomingData);
     
-    if (incomingData[0] == '-' && servoPos >= 2+editAmount)
+    if (incomingData[0] == '-' && xServoPos >= 2+xEditAmount)
     {
-      servoPos-=editAmount;
+      xServoPos-=xEditAmount;
     }
-    else if (incomingData[0] == '+' && servoPos <= 180-editAmount)
+    else if (incomingData[0] == '+' && xServoPos <= 180-xEditAmount)
     {
-      servoPos+=editAmount;
-    }
-    
-    if (servoPos >= 2 && servoPos <= 180 && servoPos != NULL)
-    {
-      myServo.write(servoPos);
+      xServoPos+=xEditAmount;
     }
     
+    if (incomingData[1] == '-' && yServoPos >= 45+yEditAmount)
+    {
+      yServoPos-=yEditAmount;
+    }
+    else if (incomingData[1] == '+' && yServoPos <= 180-yEditAmount)
+    {
+      yServoPos+=yEditAmount;
+    }
+    
+    if (xServoPos >= 2 && xServoPos <= 180 && xServoPos != NULL)
+    {
+      xServo.write(xServoPos);
+    }
+    
+    if (yServoPos >= 45 && yServoPos <= 180 && yServoPos != NULL)
+    {
+      yServo.write(yServoPos);
+    }
   }
-  //Serial.println(servoPos);
+  //Serial.println(xServoPos);
 }
